@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Messenger Anime - Vrai Groupe Sarcastique</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@800;900&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      height: 100dvh;
+      background-color: #0b0f19;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* CADRE TELEPHONE LARGE ET CONFORTABLE (PLUS DE TIGE) */
+    .phone-frame {
+      width: 100%;
+      max-width: 460px;
+      height: 100%;
+      max-height: 920px;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
+    }
+
+    @media (min-width: 481px) {
+      .phone-frame {
+        border-radius: 40px;
+        border: 10px solid #1e222d;
+        height: 92vh;
+      }
+    }
+
+    /* INTRO OVERLAY SPECTACULAIRE */
+    .intro-overlay {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, #111522 0%, #05070a 100%);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 30px;
+      transition: opacity 0.6s cubic-bezier(0.77, 0, 0.175, 1), transform 0.6s ease;
+    }
+
+    .intro-overlay.fade-out {
+      opacity: 0;
+      transform: scale(1.08);
+      pointer-events: none;
+    }
+
+    .shockwave {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 4px solid #0084FF;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .shockwave.active {
+      animation: boom 1s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+    }
+
+    @keyframes boom {
+      0% { width: 10px; height: 10px; opacity: 1; border-width: 10px; }
+      100% { width: 700px; height: 700px; opacity: 0; border-width: 1px; border-color: #00d2ff; }
+    }
+
+    .badge-tag {
+      background: rgba(0, 132, 255, 0.15);
+      border: 1px solid rgba(0, 132, 255, 0.4);
+      color: #0084FF;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      margin-bottom: 16px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.04); opacity: 1; }
+    }
+
+    .intro-title {
+      color: #ffffff;
+      font-size: 1.6rem;
+      font-weight: 800;
+      line-height: 1.25;
+      text-transform: uppercase;
+    }
+
+    .creator-name {
+      font-family: 'Cinzel', serif;
+      font-size: 1.5rem;
+      background: linear-gradient(135deg, #0084FF, #00d2ff, #ffffff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 900;
+      margin-top: 6px;
+      display: block;
+    }
+
+    .intro-sub {
+      color: #9ca3af;
+      font-size: 0.88rem;
+      margin-top: 14px;
+      line-height: 1.4;
+    }
+
+    .start-btn {
+      margin-top: 35px;
+      background: linear-gradient(135deg, #0084FF, #0055ff);
+      color: #ffffff;
+      border: none;
+      padding: 15px 36px;
+      border-radius: 30px;
+      font-size: 1rem;
+      font-weight: 800;
+      box-shadow: 0 10px 25px rgba(0, 132, 255, 0.5);
+      cursor: pointer;
+    }
+
+    /* BARRE D'ETAT */
+    .status-bar {
+      height: 40px;
+      background: #ffffff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 22px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #000;
+      flex-shrink: 0;
+    }
+
+    /* HEADER MESSENGER */
+    .header {
+      padding: 10px 16px 14px 16px;
+      background: #ffffff;
+      border-bottom: 1px solid #e5e5e5;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .group-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0084FF, #00d2ff);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      font-weight: bold;
+    }
+
+    .header-info { flex: 1; }
+    .header-title { font-size: 1.12rem; font-weight: 800; color: #050505; }
+    .header-sub { font-size: 0.78rem; color: #65676B; }
+
+    /* CHAT BOX */
+    .chat-box {
+      flex: 1;
+      padding: 16px;
+      background: #ffffff;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      scroll-behavior: smooth;
+    }
+
+    /* NOTIFICATION SYSTEME (ARRIVÉE / DÉPART) */
+    .system-notification {
+      text-align: center;
+      font-size: 0.78rem;
+      color: #8a8d91;
+      font-weight: 700;
+      margin: 6px 0;
+      background: #f7f8fa;
+      padding: 6px 12px;
+      border-radius: 12px;
+      align-self: center;
+      border: 1px solid #edf0f5;
+    }
+
+    /* BUBBLE ROW */
+    .message-row {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+      max-width: 85%;
+      opacity: 0;
+      transform: translateY(10px);
+      animation: popIn 0.3s forwards ease-out;
+    }
+
+    @keyframes popIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background-size: cover;
+      background-position: center;
+      flex-shrink: 0;
+    }
+
+    .msg-content { display: flex; flex-direction: column; gap: 3px; position: relative; }
+    .author-name { font-size: 0.78rem; color: #65676B; font-weight: 700; margin-left: 6px; }
+
+    .bubble {
+      background: #F0F2F5;
+      padding: 12px 16px;
+      border-radius: 20px;
+      font-size: 1.05rem;
+      line-height: 1.4;
+      color: #050505;
+      font-weight: 500;
+      word-break: break-word;
+    }
+
+    .reaction {
+      position: absolute;
+      bottom: -8px;
+      right: 8px;
+      background: #ffffff;
+      border: 1px solid #e5e5e5;
+      border-radius: 12px;
+      padding: 1px 6px;
+      font-size: 0.85rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .voice-bubble {
+      background: #F0F2F5;
+      padding: 12px 16px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 210px;
+    }
+
+    .play-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #0084FF;
+      border: none;
+      color: white;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .voice-wave {
+      flex: 1;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .bar { width: 3px; background: #0084FF; border-radius: 3px; opacity: 0.6; height: 30%; }
+
+    .typing-row {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 0 16px 8px 16px;
+      flex-shrink: 0;
+    }
+
+    .typing-bubble {
+      background: #F0F2F5;
+      padding: 8px 14px;
+      border-radius: 16px;
+      display: flex;
+      gap: 4px;
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      background: #8a8d91;
+      border-radius: 50%;
+      animation: bounce 1.2s infinite ease-in-out;
+    }
+    .dot:nth-child(2) { animation-delay: 0.2s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes bounce {
+      0%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-5px); }
+    }
+
+    .footer {
+      padding: 12px 16px;
+      background: #ffffff;
+      border-top: 1px solid #e5e5e5;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .input-fake {
+      flex: 1;
+      background: #F0F2F5;
+      padding: 10px 18px;
+      border-radius: 22px;
+      color: #8a8d91;
+      font-size: 0.95rem;
+    }
+
+    .send-icon { color: #0084FF; font-size: 1.35rem; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <div class="phone-frame">
+    <!-- OVERLAY SPECTACULAIRE -->
+    <div class="intro-overlay" id="introOverlay">
+      <div class="shockwave" id="shockwave"></div>
+      <div class="badge-tag">⚡ VRAI GROUPE LIVE</div>
+      
+      <h1 class="intro-title">BIENVENUE DANS LA SIMULATION DE DISCUSSION</h1>
+      
+      <div style="margin-top: 8px;">
+        <span style="color:#8a8d91; font-size:0.82rem; text-transform:uppercase;">Créée par</span>
+        <span class="creator-name">NOAH PIERSON</span>
+      </div>
+
+      <p class="intro-sub">Le groupe le plus impitoyable et sarcastique d'Internet t'attend. Accroche-toi.</p>
+
+      <button class="start-btn" id="startBtn">ENTRER DANS L'ARÈNE 🚀</button>
+    </div>
+
+    <!-- BARRE D'ETAT -->
+    <div class="status-bar">
+      <span>09:41</span>
+      <span>📶 🔋 100%</span>
+    </div>
+
+    <!-- HEADER MESSENGER -->
+    <div class="header">
+      <div class="group-avatar">💀</div>
+      <div class="header-info">
+        <div class="header-title">LE TRIBUNAL DE MIRADI</div>
+        <div class="header-sub">9 membres • Pleurs garantis</div>
+      </div>
+    </div>
+
+    <!-- CHAT BOX -->
+    <div class="chat-box" id="chatBox"></div>
+
+    <!-- TYPING INDICATOR -->
+    <div class="typing-row" id="typingIndicator">
+      <div class="avatar" id="typingAvatar"></div>
+      <div class="typing-bubble">
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <div class="input-fake">Aa</div>
+      <div class="send-icon">👍</div>
+    </div>
+  </div>
+
+  <script>
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playBoom() {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(140, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(25, audioCtx.currentTime + 0.7);
+      gain.gain.setValueAtTime(1, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.7);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.7);
+    }
+
+    // BASE DE DONNÉES DES PERSONNAGES AVEC VRAIES URLS DE PICS
+    const chars = {
+      gojo: { name: "Gojo Satoru", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80", pitch: 1.3 },
+      levi: { name: "Capitaine Levi", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80", pitch: 0.6 },
+      sukuna: { name: "Ryomen Sukuna", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80", pitch: 0.5 },
+      dazai: { name: "Osamu Dazai", avatar: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=150&q=80", pitch: 1.1 },
+      bakugo: { name: "Katsuki Bakugo", avatar: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=150&q=80", pitch: 1.4 },
+      killua: { name: "Killua Zoldyck", avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80", pitch: 1.2 },
+      zoro: { name: "Roronoa Zoro", avatar: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=150&q=80", pitch: 0.7 },
+      saitama: { name: "Saitama", avatar: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=150&q=80", pitch: 0.9 }
+    };
+
+    // TRÈS LONGUE DISCUSSION STYLE "VRAI GROUPE" (ARRIVÉES, DÉPARTS, TAQUINERIE PURE)
+    const script = [
+      { char: 'gojo', text: "Bon, qui a invité Miradi dans ce groupe déjà ? C'est le moment d'avouer.", delay: 1500 },
+      { char: 'dazai', text: "C'est pas moi ! Je cherchais juste un clown pour le spectacle du week-end.", reaction: "🤡", delay: 2000 },
+      { type: 'system', text: "Katsuki Bakugo a rejoint le groupe.", delay: 1200 },
+      { char: 'bakugo', text: "C'est quoi ce loser qui n'a même pas la force de répondre en moins de 2 heures ?! SHINEEEE !", reaction: "💥", delay: 2200 },
+      { type: 'system', text: "Killua Zoldyck a rejoint le groupe.", delay: 1000 },
+      { char: 'killua', text: "Calme-toi Bakugo. Laisse-le un peu, il est sûrement occupé à pleurer devant son miroir.", delay: 2000 },
+      { char: 'levi', text: "Le problème c'est pas qu'il pleure, c'est qu'il laisse des traces de morve partout sur l'écran.", reaction: "💀", delay: 2200 },
+      { char: 'sukuna', isVoice: true, duration: "0:06", text: "Pathétique. Même un insecte a plus d'impact sur l'univers que lui.", delay: 2500 },
+      { type: 'system', text: "Roronoa Zoro a rejoint le groupe.", delay: 1200 },
+      { char: 'zoro', text: "Attendez... c'est ici le groupe de soutien pour les gens sans charisme ?", delay: 2000 },
+      { char: 'gojo', text: "Exactement Zoro ! Installe-toi, Miradi est le sujet principal aujourd'hui.", reaction: "😂", delay: 2000 },
+      { type: 'system', text: "Saitama a rejoint le groupe.", delay: 1000 },
+      { char: 'saitama', text: "Quelqu'un a dit qu'on distribuait des coupons de réduction ? Ah non, c'est juste Miradi qu'on détruit...", delay: 2200 },
+      { char: 'dazai', isVoice: true, duration: "0:05", text: "Franchement Miradi, si tu nous lis, envoie un vocal pour pleurer un bon coup, on aime l'ambiance.", delay: 2500 },
+      { char: 'bakugo', text: "S'il envoie un vocal je casse mon téléphone ! Il a une voix de gamin de 5 ans !", reaction: "🔥", delay: 2000 },
+      { type: 'system', text: "Katsuki Bakugo a quitté le groupe.", delay: 1500 },
+      { char: 'killua', text: "Il s'est barré parce qu'il supporte pas la lose de Miradi mdr", delay: 2000 },
+      { char: 'levi', text: "Bon, rangez vos téléphones, je vais aller passer un coup de balai sur la dignité de Miradi.", reaction: "🧹", delay: 2200 },
+      { type: 'system', text: "Capitaine Levi a quitté le groupe.", delay: 1500 },
+      { char: 'gojo', text: "Allez, mission accomplie, il est en train de fondre en larmes. Bonne nuit tout le monde ! ❤️", reaction: "❤️", delay: 2000 }
+    ];
+
+    const chatBox = document.getElementById('chatBox');
+    const typingIndicator = document.getElementById('typingIndicator');
+    const typingAvatar = document.getElementById('typingAvatar');
+    const startBtn = document.getElementById('startBtn');
+    const introOverlay = document.getElementById('introOverlay');
+    const shockwave = document.getElementById('shockwave');
+
+    let index = 0;
+
+    function speak(text, pitch, callback) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = 'fr-FR';
+        u.pitch = pitch;
+        u.onend = callback;
+        window.speechSynthesis.speak(u);
+      } else {
+        if(callback) callback();
+      }
+    }
+
+    function renderNext() {
+      if (index >= script.length) return;
+
+      const item = script[index];
+
+      // GESTION DES NOTIFICATIONS SYSTÈME (Arrivée/Départ)
+      if (item.type === 'system') {
+        const sysDiv = document.createElement('div');
+        sysDiv.className = 'system-notification';
+        sysDiv.textContent = item.text;
+        chatBox.appendChild(sysDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
+        index++;
+        setTimeout(renderNext, 1200);
+        return;
+      }
+
+      const char = chars[item.char];
+
+      typingAvatar.style.backgroundImage = `url('${char.avatar}')`;
+      typingIndicator.style.display = 'flex';
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      setTimeout(() => {
+        typingIndicator.style.display = 'none';
+
+        const row = document.createElement('div');
+        row.className = 'message-row';
+
+        let content = `
+          <div class="avatar" style="background-image: url('${char.avatar}')"></div>
+          <div class="msg-content">
+            <span class="author-name">${char.name}</span>
+        `;
+
+        if (item.isVoice) {
+          content += `
+            <div class="voice-bubble">
+              <button class="play-btn">▶</button>
+              <div class="voice-wave">
+                <div class="bar" style="height:40%"></div>
+                <div class="bar" style="height:80%"></div>
+                <div class="bar" style="height:30%"></div>
+                <div class="bar" style="height:90%"></div>
+              </div>
+              <span style="font-size:0.75rem; color:#65676B;">${item.duration}</span>
+            </div>
+          `;
+        } else {
+          content += `<div class="bubble">${item.text}</div>`;
+        }
+
+        if (item.reaction) {
+          content += `<div class="reaction">${item.reaction}</div>`;
+        }
+
+        content += `</div>`;
+        row.innerHTML = content;
+        chatBox.appendChild(row);
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        if (item.isVoice) {
+          speak(item.text, char.pitch, () => {
+            index++;
+            setTimeout(renderNext, 1200);
+          });
+        } else {
+          index++;
+          setTimeout(renderNext, item.delay);
+        }
+
+      }, 1200);
+    }
+
+    startBtn.addEventListener('click', () => {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      shockwave.classList.add('active');
+      playBoom();
+
+      setTimeout(() => {
+        introOverlay.classList.add('fade-out');
+        setTimeout(renderNext, 500);
+      }, 300);
+    });
+  </script>
+</body>
+  </html>
+  
